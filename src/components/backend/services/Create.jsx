@@ -3,9 +3,22 @@ import { SkipBackIcon, StepBack } from 'lucide-react'
 import Navbar from '../../common/Navbar'
 import Sidebar from '../../common/Sidebar'
 import Footer from '../../common/Footer'
+import { useForm } from "react-hook-form";
+
 
 
 const Create = () => {
+    const { 
+        register, 
+        handleSubmit, 
+        watch, 
+        formState: { errors } 
+    } = useForm();
+
+    const onSubmit = data => {
+        console.log(data)
+    }
+
     return (
         <>
             <Navbar />
@@ -16,7 +29,7 @@ const Create = () => {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-3xl font-bold text-slate-900">Services Management</h1>
+                                <h1 className="text-3xl font-bold text-slate-900">Create Services Management</h1>
                                 <p className="text-slate-600 mt-1">Manage your construction services and offerings</p>
                             </div>
                             <a
@@ -27,6 +40,50 @@ const Create = () => {
                                 Back
                             </a>
                         </div>
+                        <form action="" onSubmit={handleSubmit(onSubmit)}>
+                            <div>
+                                <label htmlFor="">Name</label>
+                                <input 
+                                {
+                                    ...register('title', {
+                                        required: "The title field is required"
+                                    })
+                                }
+                                type="text" />
+                                { errors.title && <p>{errors.title?.message}</p>}
+                                <label htmlFor="">Slug</label>
+                                <input 
+                                {
+                                    ...register('slug', {
+                                        required: "The slug field is required"
+                                    })
+                                }
+                                type="text" />
+                                 { errors.slug && <p>{errors.slug?.message}</p>}
+                                <label htmlFor="">Short Description</label>
+                                <textarea 
+                                {
+                                    ...register('short_desc')
+                                }
+                                ></textarea>
+                                <label htmlFor="">Content</label>
+                                <textarea 
+                                {
+                                    ...register('content')
+                                }
+                                ></textarea>
+                                <label htmlFor="">Status</label>
+                                <select 
+                                {
+                                    ...register('status')
+                                }
+                                name="" id="">
+                                    <option value="1">Active</option>
+                                    <option value="0">Block</option>
+                                </select>
+                            </div>
+                            <button type='submit'>Submit</button>
+                        </form>
                     </div>
                 </div>
             </main>
