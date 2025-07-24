@@ -46,7 +46,7 @@ const Sidebar = () => {
   ]
 
   return (
-    <div className={`relative h-screen bg-white border-r border-slate-200/50 shadow-lg transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-72'}`}>
+    <div className={`relative min-h-screen bg-white border-r border-slate-200/50 shadow-lg transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-72'}`}>
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-slate-200/50">
         {!isCollapsed && (
