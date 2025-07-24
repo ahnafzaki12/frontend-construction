@@ -11,11 +11,11 @@ import {
   Building2
 } from "lucide-react"
 import { AuthContext } from "../backend/context/Auth"
+import { Link, useLocation } from 'react-router-dom'
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [activeItem, setActiveItem] = useState('dashboard')
-
+  const location = useLocation()
   const [, , logout] = useContext(AuthContext)
 
   const menuItems = [
@@ -23,36 +23,27 @@ const Sidebar = () => {
       id: 'dashboard',
       label: 'Dashboard',
       icon: LayoutDashboard,
-      href: '#dashboard'
+      href: '/admin/dashboard'
     },
     {
       id: 'services',
       label: 'Services',
       icon: Settings,
-      href: '#services'
+      href: '/admin/services'
     },
     {
       id: 'projects',
       label: 'Projects',
       icon: FolderOpen,
-      href: '#projects'
+      href: '/admin/projects'
     },
     {
       id: 'articles',
       label: 'Articles',
       icon: FileText,
-      href: '#articles'
+      href: '/admin/articles'
     }
   ]
-
-  const handleItemClick = (itemId) => {
-    setActiveItem(itemId)
-  }
-
-  const handleLogout = () => {
-    console.log('Logging out...')
-    // Add your logout logic here
-  }
 
   return (
     <div className={`relative h-screen bg-white border-r border-slate-200/50 shadow-lg transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-72'}`}>
@@ -85,30 +76,28 @@ const Sidebar = () => {
       <nav className="flex flex-col p-4 space-y-2 flex-grow">
         {menuItems.map((item) => {
           const Icon = item.icon
-          const isActive = activeItem === item.id
+          const isActive = location.pathname.startsWith(item.href)
 
           return (
-            <a
+            <Link
               key={item.id}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault()
-                handleItemClick(item.id)
-              }}
+              to={item.href}
               className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
             >
               <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-700'}`} />
-
               {!isCollapsed && (
                 <>
                   <span className="font-medium">{item.label}</span>
-                  <ChevronRight className={`w-4 h-4 ml-auto transition-transform duration-200 ${isActive ? 'rotate-90 text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                  <ChevronRight
+                    className={`w-4 h-4 ml-auto transition-transform duration-200 ${isActive ? 'rotate-90 text-white' : 'text-slate-400 group-hover:text-slate-600'
+                      }`}
+                  />
                 </>
               )}
-            </a>
+            </Link>
           )
         })}
       </nav>

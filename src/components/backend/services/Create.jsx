@@ -1,22 +1,53 @@
-import React from 'react'
+import React, { useState, useRef, useMemo } from 'react';
 import { SkipBackIcon, StepBack } from 'lucide-react'
 import Navbar from '../../common/Navbar'
 import Sidebar from '../../common/Sidebar'
 import Footer from '../../common/Footer'
 import { useForm } from "react-hook-form";
+import { apiUrl, token } from '../../common/http'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import JoditEditor from 'jodit-react';
 
+const Create = ({ placeholder }) => {
+    const editor = useRef(null);
+    const [content, setContent] = useState('');
 
+    const config = useMemo(() => ({
+        readonly: false, // all options from https://xdsoft.net/jodit/docs/,
+        placeholder: placeholder || 'Content'
+    }),
+        [placeholder]
+    );
 
-const Create = () => {
-    const { 
-        register, 
-        handleSubmit, 
-        watch, 
-        formState: { errors } 
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors }
     } = useForm();
 
-    const onSubmit = data => {
-        console.log(data)
+    const navigate = useNavigate()
+
+    async function onSubmit(data) {
+        const newData = { ...data, "content": content}
+        const res = await fetch(apiUrl + "services", {
+            'method': "POST",
+            'headers': {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token()}`
+            },
+            body: JSON.stringify(newData)
+        })
+        const result = await res.json();
+
+        if (result.status == true) {
+            toast.success(result.message)
+            navigate("/admin/services")
+        } else {
+            toast.error(result.message)
+        }
     }
 
     return (
@@ -43,41 +74,44 @@ const Create = () => {
                         <form action="" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label htmlFor="">Name</label>
-                                <input 
-                                {
+                                <input
+                                    {
                                     ...register('title', {
                                         required: "The title field is required"
                                     })
-                                }
-                                type="text" />
-                                { errors.title && <p>{errors.title?.message}</p>}
+                                    }
+                                    type="text" />
+                                {errors.title && <p>{errors.title?.message}</p>}
                                 <label htmlFor="">Slug</label>
-                                <input 
-                                {
+                                <input
+                                    {
                                     ...register('slug', {
                                         required: "The slug field is required"
                                     })
-                                }
-                                type="text" />
-                                 { errors.slug && <p>{errors.slug?.message}</p>}
+                                    }
+                                    type="text" />
+                                {errors.slug && <p>{errors.slug?.message}</p>}
                                 <label htmlFor="">Short Description</label>
-                                <textarea 
-                                {
+                                <textarea
+                                    {
                                     ...register('short_desc')
-                                }
+                                    }
                                 ></textarea>
                                 <label htmlFor="">Content</label>
-                                <textarea 
-                                {
-                                    ...register('content')
-                                }
-                                ></textarea>
+                                <JoditEditor
+                                    ref={editor}
+                                    value={content}
+                                    config={config}
+                                    tabIndex={1} // tabIndex of textarea
+                                    onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+                                    onChange={newContent => { }}
+                                />
                                 <label htmlFor="">Status</label>
-                                <select 
-                                {
+                                <select
+                                    {
                                     ...register('status')
-                                }
-                                name="" id="">
+                                    }
+                                    name="" id="">
                                     <option value="1">Active</option>
                                     <option value="0">Block</option>
                                 </select>
