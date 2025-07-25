@@ -1,30 +1,22 @@
-import { ArrowRight, Building, Home, Factory} from "lucide-react"
-import serviceImg from "../../assets/images/construction1.jpg"
+import { ArrowRight, Building, Home, Factory } from "lucide-react"
+import { apiUrl, token } from "./http"
+import { useEffect, useState } from "react"
 
-const Services = () => {
-    const services = [
-        {
-            title: "Residential Construction",
-            description:
-                "Custom homes and residential projects built with precision, quality materials, and attention to detail that exceeds expectations.",
-            icon: Home,
-            image: serviceImg,
-        },
-        {
-            title: "Commercial Building",
-            description:
-                "Office buildings, retail spaces, and commercial complexes designed for functionality, durability, and modern business needs.",
-            icon: Building,
-            image: serviceImg,
-        },
-        {
-            title: "Industrial Projects",
-            description:
-                "Large-scale industrial facilities, warehouses, and manufacturing plants built to meet strict industry standards and regulations.",
-            icon: Factory,
-            image: serviceImg,
-        },
-    ]
+function Services() {
+    const [services, setServices] = useState([]);
+
+    async function fetchLatestServices() {
+        const res = await fetch(apiUrl + 'get-latest-services?limit=3', {
+            'method': "GET",
+        })
+        const result = await res.json();
+        console.log(result)
+        setServices(result)
+    }
+
+    useEffect(() => {
+        fetchLatestServices();
+    }, [])
 
     return (
         <section className="py-20 bg-gradient-to-br from-slate-50 to-sky-50/30" id="services">
@@ -59,13 +51,13 @@ const Services = () => {
                             {/* Service Image - Full Card */}
                             <div className="relative w-full h-full overflow-hidden">
                                 <img
-                                    src={service.image || "/placeholder.svg"}
+                                    src={`http://localhost:8000/uploads/services/small/${service.image}`}
                                     alt={`${service.title} service`}
                                     width={400}
                                     height={320}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                
+
                                 {/* Default Overlay with Title */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent flex items-end">
                                     <div className="p-6 w-full">
@@ -86,15 +78,15 @@ const Services = () => {
                                         <div className="w-12 h-12 bg-sky-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-4">
                                             <Building className="w-6 h-6 text-sky-400" />
                                         </div>
-                                        
+
                                         <h3 className="text-xl font-bold text-white mb-3">
                                             {service.title}
                                         </h3>
-                                        
+
                                         <p className="text-slate-200 leading-relaxed text-sm">
-                                            {service.description}
+                                            {service.short_desc}
                                         </p>
-                                        
+
                                         <div className="pt-2">
                                             <a
                                                 href="#"

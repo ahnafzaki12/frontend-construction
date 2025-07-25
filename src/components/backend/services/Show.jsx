@@ -4,6 +4,9 @@ import Sidebar from '../../common/Sidebar'
 import Footer from '../../common/Footer'
 import { apiUrl, token } from '../../common/http'
 import { Eye, Edit, Trash2, Plus, CheckCircle, XCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const Show = () => {
     const [services, setServices] = useState([]);
@@ -21,6 +24,66 @@ const Show = () => {
         const result = await res.json();
         setServices(result.data);
     }
+
+    const MySwal = withReactContent(Swal);
+
+    async function deleteService(service) {
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: `Do you really want to delete "${service.title}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'rounded-lg px-4 py-2',
+                cancelButton: 'rounded-lg px-4 py-2'
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    // Pastikan API URL sudah benar dengan menambahkan ID service
+                    const res = await fetch(apiUrl + 'services/' + service.id, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-type': 'application/json',
+                            'Authorization': `Bearer ${token()}`
+                        }
+                    });
+                    const result = await res.json();
+
+                    if (result.status === true) {
+                        await fetchServices();
+                        MySwal.fire({
+                            title: 'Deleted!',
+                            text: 'Service has been deleted successfully.',
+                            icon: 'success',
+                            customClass: {
+                                popup: 'rounded-xl',
+                                confirmButton: 'rounded-lg px-4 py-2'
+                            }
+                        });
+                    } else {
+                        throw new Error('Failed to delete service');
+                    }
+                } catch (error) {
+                    MySwal.fire({
+                        title: 'Error!',
+                        text: 'Failed to delete service. Please try again.',
+                        icon: 'error',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            confirmButton: 'rounded-lg px-4 py-2'
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 
     useEffect(() => {
         fetchServices();
@@ -129,14 +192,14 @@ const Show = () => {
                                                     <Eye className="w-4 h-4" />
                                                     View
                                                 </a>
-                                                <a href="#" className="text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                                                <Link to={`/admin/services/edit/${service.id}`} className="text-slate-600 hover:text-slate-900 flex items-center gap-1">
                                                     <Edit className="w-4 h-4" />
                                                     Edit
-                                                </a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 flex items-center gap-1">
+                                                </Link>
+                                                <Link onClick={() => deleteService(service)} className="text-red-600 hover:text-red-900 flex items-center gap-1">
                                                     <Trash2 className="w-4 h-4" />
                                                     Delete
-                                                </a>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))}
