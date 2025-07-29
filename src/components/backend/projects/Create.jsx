@@ -1,102 +1,6 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { SkipBackIcon, Upload, AlertCircle, Save, Eye } from 'lucide-react';
-import Navbar from '../../common/Navbar';
-import Sidebar from '../../common/Sidebar';
-import Footer from '../../common/Footer';
-import { useForm } from "react-hook-form";
-import { apiUrl, token, fileUrl } from '../../common/http';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import JoditEditor from 'jodit-react';
+import React from 'react'
 
-const Create = ({ placeholder }) => {
-    const editor = useRef(null);
-    const [content, setContent] = useState('');
-    const [service, setService] = useState('');
-    const [isDisable, setIsDisable] = useState(false);
-    const [imageId, setImageId] = useState(null);
-    const [imageName, setImageName] = useState('');
-    const params = useParams()
-
-    const config = useMemo(() => ({
-        readonly: false,
-        placeholder: placeholder || ''
-    }), [placeholder]);
-
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors }
-    } = useForm({
-        defaultValues: async () => {
-            const res = await fetch(apiUrl + "services/" + params.id, {
-                'method': "GET",
-                'headers': {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token()}`
-                }
-            });
-            const result = await res.json();
-            setContent(result.data.content)
-            setService(result.data)
-            return {
-                title: result.data.title,
-                slug: result.data.slug,
-                short_desc: result.data.short_desc,
-                status: result.data.status,
-            }
-        }
-    });
-
-    const navigate = useNavigate();
-
-    async function onSubmit(data) {
-        const newData = { ...data, "content": content, "imageId": imageId, "status": 1 };
-        const res = await fetch(apiUrl + "services/" + params.id, {
-            'method': "PUT",
-            'headers': {
-                'Content-type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token()}`
-            },
-            body: JSON.stringify(newData)
-        });
-        const result = await res.json();
-
-        if (result.status === true) {
-            toast.success(result.message);
-            navigate("/admin/services");
-        } else {
-            toast.error(result.message);
-        }
-    }
-
-    async function handleFile(e) {
-        const formData = new FormData();
-        const file = e.target.files[0];
-        formData.append("image", file);
-
-        const res = await fetch(apiUrl + "temp-images", {
-            'method': "POST",
-            'headers': {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token()}`
-            },
-            body: formData
-        }).then(response => {
-            response.json().then(result => {
-                if (result.status === false) {
-                    toast.error(result.errors.image[0]);
-                } else {
-                    setImageId(result.data.id);
-                    setImageName(file.name); // Set nama file gambar setelah diupload
-                }
-            });
-        });
-    }
-
+const Create = () => {
     return (
         <>
             <Navbar />
@@ -107,7 +11,7 @@ const Create = ({ placeholder }) => {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-3xl font-bold text-slate-900">Edit Services Management</h1>
+                                <h1 className="text-3xl font-bold text-slate-900">Create Services Management</h1>
                                 <p className="text-slate-600 mt-1">Manage your construction services and offerings</p>
                             </div>
                             <a
@@ -217,17 +121,9 @@ const Create = ({ placeholder }) => {
                                         type="file"
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     />
-                                    {service.image && (
-                                        <div className="max-w-1/2 min-h-0.5 overflow-hidden rounded-lg mb-4">
-                                            <img
-                                                src={fileUrl + 'uploads/services/' + service.image}
-                                                alt={`${service.title} service`}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                            />
-                                        </div>
-                                    )}
                                     <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-sky-400 hover:bg-sky-50/50 transition-all duration-300">
                                         <div className="space-y-4">
+
                                             <div>
                                                 {imageName ? (
                                                     <p className="text-slate-600 font-medium">{imageName}</p>
@@ -254,7 +150,15 @@ const Create = ({ placeholder }) => {
                                     className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 >
                                     <Save className="w-5 h-5" />
-                                    {isDisable ? 'Saving...' : 'Edit Service'}
+                                    {isDisable ? 'Saving...' : 'Create Service'}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center justify-center gap-2 bg-white border-2 border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-8 py-3 rounded-lg font-semibold transition-all duration-300"
+                                >
+                                    <Eye className="w-5 h-5" />
+                                    Preview
                                 </button>
 
                                 <a
@@ -270,7 +174,7 @@ const Create = ({ placeholder }) => {
             </main>
             <Footer />
         </>
-    );
-};
+    )
+}
 
-export default Create;
+export default Create

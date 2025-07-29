@@ -50,14 +50,15 @@ function Services() {
                         >
                             {/* Service Image - Full Card */}
                             <div className="relative w-full h-full overflow-hidden">
-                                <img
-                                    src={`http://localhost:8000/uploads/services/small/${service.image}`}
-                                    alt={`${service.title} service`}
-                                    width={400}
-                                    height={320}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-
+                                {service.image && (
+                                    <img
+                                        src={`http://localhost:8000/uploads/services/${service.image}`}
+                                        alt={`${service.title} service`}
+                                        width={400}
+                                        height={320}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                )}
                                 {/* Default Overlay with Title */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent flex items-end">
                                     <div className="p-6 w-full">
