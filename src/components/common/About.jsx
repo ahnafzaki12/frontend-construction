@@ -1,8 +1,6 @@
-import React from 'react';
 import AboutImg from "../../assets/images/about-us.jpg"
 
 const About = () => {
-
     return (
         <section className="py-20 bg-white" id="about">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,7 +12,7 @@ const About = () => {
                             alt="Construction workers building modern structure"
                             className="w-full h-[400px] object-cover rounded-lg shadow-lg"
                         />
-                        
+
                         {/* Simple stats overlay */}
                         <div className="absolute bottom-6 left-6 bg-white rounded-lg p-4 shadow-lg">
                             <p className="text-2xl font-bold text-gray-900">25+</p>
@@ -63,10 +61,41 @@ const About = () => {
                         </div>
 
                         {/* Simple CTA */}
-                        <div className="pt-4">
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-300">
-                                Learn More About Us
-                            </button>
+                        <div className="pt-2">
+                            <a
+                                href="/about-us"
+                                className="group relative inline-flex items-center rounded-full py-3 pr-8 pl-1 gap-3 transition-all duration-500 ease-in-out hover:pr-12"
+                            >
+                                <span className="absolute left-0 top-0 bottom-0 w-12 rounded-full bg-blue-600 transition-all duration-500 ease-in-out group-hover:w-full z-0"></span>
+
+                                <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={2.5}
+                                        stroke="currentColor"
+                                        className="h-5 w-5 text-white transition-all duration-500 ease-in-out group-hover:translate-x-10 group-hover:opacity-0"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </div>
+
+                                <span className="relative z-10 whitespace-nowrap text-xl font-bold text-blue-600 transition-colors duration-300 group-hover:text-white group-hover:delay-75">
+                                    Our Vision, Values & Commitments
+                                </span>
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2.5}
+                                    stroke="currentColor"
+                                    className="absolute right-5 z-10 h-5 w-5 translate-y-0 text-white opacity-0 transition-all duration-500 ease-in-out -translate-x-4 group-hover:translate-x-0 group-hover:opacity-100"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>

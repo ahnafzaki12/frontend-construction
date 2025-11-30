@@ -1,9 +1,9 @@
 import Navbar from "../common/Navbar"
-import About from "../common/About"
 import Footer from "../common/Footer"
 import { Linkedin, Mail, Phone } from "lucide-react"
 import memberImg from "../../assets/images/team1.jpg"
 import heroBg from '../../assets/images/hero.jpg';
+import AboutImg from "../../assets/images/about-us.jpg"
 
 const AboutUs = () => {
   const teamMembers = [
@@ -50,27 +50,17 @@ const AboutUs = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[90vh] flex items-center justify-start overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroBg} alt="Construction site with cranes" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-800/70 to-blue-900/60"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent"></div>
         </div>
 
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-sky-500/20 backdrop-blur-sm border border-sky-400/30 text-sky-300 px-4 py-2 rounded-full mb-6">
-            <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
-            <span className="text-sm font-semibold tracking-wider uppercase">Quality. Integrity. Value.</span>
-          </div>
-
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            About{" "}
-            <span className="bg-gradient-to-r from-sky-400 via-blue-300 to-sky-500 bg-clip-text text-transparent">
-              Us
-            </span>
+        <div className="relative z-10 text-left px-4 sm:px-6 lg:px-8 max-w-4xl ml-34">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-200 mb-6 leading-tight">
+            About Us
           </h1>
 
-          <p className="text-xl md:text-2xl text-slate-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl font-semibold md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed">
             We excel at transforming visions into reality through outstanding craftsmanship and precise attention to
             detail.
           </p>
@@ -78,7 +68,67 @@ const AboutUs = () => {
       </section>
 
       {/* About Section */}
-      <About />
+      <section className="py-20 bg-white" id="about">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Image Section */}
+            <div className="relative">
+              <img
+                src={AboutImg}
+                alt="Construction workers building modern structure"
+                className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+              />
+
+              {/* Simple stats overlay */}
+              <div className="absolute bottom-6 left-6 bg-white rounded-lg p-4 shadow-lg">
+                <p className="text-2xl font-bold text-gray-900">25+</p>
+                <p className="text-sm text-gray-600">Years Experience</p>
+              </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="space-y-8">
+              {/* Simple badge */}
+              <div className="inline-block">
+                <span className="text-slate-600 text-xl font-medium uppercase tracking-wider">About Us</span>
+              </div>
+
+              {/* Main heading */}
+              <h2 className="text-4xl font-bold text-gray-900 leading-tight">
+                Crafting structures that{" "}
+                <span className="text-blue-600">last a lifetime</span>
+              </h2>
+
+              {/* Description */}
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Building enduring structures requires a comprehensive approach that combines advanced materials, resilient
+                design, routine maintenance, and sustainable practices. By drawing on historical insights and utilizing
+                modern technology, we create buildings that stand the test of time.
+              </p>
+
+              {/* Simplified features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span className="text-gray-700">Quality materials from trusted suppliers</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span className="text-gray-700">Expert team with decades of experience</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span className="text-gray-700">Projects completed on schedule</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span className="text-gray-700">Dedicated to exceeding expectations</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Team Section */}
       <section className="py-20 bg-gray-50" id="team">

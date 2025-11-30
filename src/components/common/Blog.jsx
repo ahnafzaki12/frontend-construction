@@ -1,53 +1,54 @@
-import React from 'react'
 import { ArrowRight, Calendar, User, Clock, Tag } from "lucide-react"
-import blogImg from "../../assets/images/construction3.jpg"
+import { useEffect, useState } from "react";
+import { apiUrl } from "./http";
 
 const Blog = () => {
-  const blogPosts = [
-    {
-      title: "Top 10 Construction Trends to Watch in 2024",
-      excerpt: "Discover the latest innovations and technologies shaping the future of construction industry, from sustainable building practices to AI integration.",
-      author: "John Smith",
-      date: "March 15, 2024",
-      readTime: "5 min read",
-      category: "Industry Trends",
-      image: blogImg,
-      featured: true
-    },
-    {
-      title: "Sustainable Building Materials: A Complete Guide",
-      excerpt: "Learn about eco-friendly construction materials that reduce environmental impact while maintaining durability and cost-effectiveness.",
-      author: "Sarah Johnson",
-      date: "March 10, 2024",
-      readTime: "8 min read",
-      category: "Sustainability",
-      image: blogImg,
-      featured: false
-    },
-    {
-      title: "Project Management Best Practices for Construction",
-      excerpt: "Essential strategies and tools for managing construction projects efficiently, ensuring timely delivery and budget compliance.",
-      author: "Mike Davis",
-      date: "March 5, 2024",
-      readTime: "6 min read",
-      category: "Management",
-      image: blogImg,
-      featured: false
-    },
-    {
-      title: "Safety Innovations in Modern Construction Sites",
-      excerpt: "Explore cutting-edge safety technologies and protocols that are revolutionizing worker protection in construction environments.",
-      author: "Lisa Chen",
-      date: "February 28, 2024",
-      readTime: "7 min read",
-      category: "Safety",
-      image: blogImg,
-      featured: false
-    },
-  ]
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const featuredPost = blogPosts.find(post => post.featured)
-  const regularPosts = blogPosts.filter(post => !post.featured)
+  async function fetchLatestPosts() {
+    try {
+      setLoading(true);
+      const res = await fetch(apiUrl + 'get-latest-posts?limit=3', {
+        method: "GET",
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      
+      const result = await res.json();
+      setPosts(result);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching posts:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchLatestPosts();
+  }, []);
+
+  // Format tanggal dari created_at
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  // Hitung estimasi waktu baca (asumsi 200 kata per menit)
+  const calculateReadTime = (excerpt) => {
+    const words = excerpt.split(' ').length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+  };
 
   return (
     <section className="py-20 bg-gradient-to-br from-slate-50 to-sky-50/30" id="blog">
@@ -71,144 +72,124 @@ const Blog = () => {
           </p>
         </div>
 
-        {/* Featured Post */}
-        {featuredPost && (
-          <div className="mb-16">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200/50 hover:shadow-2xl transition-all duration-500 group">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                {/* Featured Image */}
-                <div className="relative overflow-hidden">
-                  <img
-                    src={featuredPost.image}
-                    alt={featuredPost.title}
-                    className="w-full h-64 lg:h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute top-4 left-4 bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    Featured
-                  </div>
-                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                    {featuredPost.category}
-                  </div>
-                </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
+            <p className="mt-4 text-slate-600">Loading posts...</p>
+          </div>
+        )}
 
-                {/* Featured Content */}
-                <div className="p-8 lg:p-10 flex flex-col justify-center">
-                  <div className="flex items-center gap-4 text-slate-500 text-sm mb-4">
-                    <div className="flex items-center gap-1">
-                      <User className="w-4 h-4" />
-                      <span>{featuredPost.author}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{featuredPost.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{featuredPost.readTime}</span>
-                    </div>
-                  </div>
-
-                  <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4 group-hover:text-sky-600 transition-colors">
-                    {featuredPost.title}
-                  </h3>
-
-                  <p className="text-slate-600 leading-relaxed mb-6 text-lg">
-                    {featuredPost.excerpt}
-                  </p>
-
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 font-semibold group-hover:gap-3 transition-all duration-300"
-                  >
-                    Read Full Article
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </a>
-                </div>
-              </div>
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-12">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-red-600 font-semibold mb-2">Failed to load posts</p>
+              <p className="text-red-500 text-sm">{error}</p>
+              <button 
+                onClick={fetchLatestPosts}
+                className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Try Again
+              </button>
             </div>
           </div>
         )}
 
-        {/* Regular Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {regularPosts.map((post, index) => (
-            <article
-              key={index}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-200/50 hover:border-sky-200"
-            >
-              {/* Post Image */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                  <div className="flex items-center gap-1">
-                    <Tag className="w-3 h-3" />
-                    {post.category}
-                  </div>
-                </div>
-              </div>
-
-              {/* Post Content */}
-              <div className="p-6 space-y-4">
-                {/* Meta Info */}
-                <div className="flex items-center justify-between text-slate-500 text-sm">
-                  <div className="flex items-center gap-1">
-                    <User className="w-3 h-3" />
-                    <span>{post.author}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{post.readTime}</span>
+        {/* Posts Grid */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <article
+                key={post.id}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-200/50 hover:border-sky-200"
+              >
+                {/* Post Image */}
+                <div className="relative overflow-hidden">
+                  <img
+                    src={`http://localhost:8000/${post.image}`}
+                    alt={post.title}
+                    className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                    }}
+                  />
+                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+                    <div className="flex items-center gap-1">
+                      <Tag className="w-3 h-3" />
+                      {post.category}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-slate-500 text-sm">
-                  <Calendar className="w-3 h-3" />
-                  <span>{post.date}</span>
+                {/* Post Content */}
+                <div className="p-6 space-y-4">
+                  {/* Meta Info */}
+                  <div className="flex items-center justify-between text-slate-500 text-sm">
+                    <div className="flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      <span>{post.author}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      <span>{calculateReadTime(post.excerpt)}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-slate-500 text-sm">
+                    <Calendar className="w-3 h-3" />
+                    <span>{formatDate(post.created_at)}</span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p className="text-slate-600 leading-relaxed text-sm line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  {/* Read More Link */}
+                  <div className="pt-2">
+                    <a
+                      href={`#post-${post.id}`}
+                      className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 font-semibold text-sm group-hover:gap-3 transition-all duration-300"
+                    >
+                      Read More
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </a>
+                  </div>
                 </div>
+              </article>
+            ))}
+          </div>
+        )}
 
-                {/* Title */}
-                <h3 className="text-xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-2">
-                  {post.title}
-                </h3>
-
-                {/* Excerpt */}
-                <p className="text-slate-600 leading-relaxed text-sm line-clamp-3">
-                  {post.excerpt}
-                </p>
-
-                {/* Read More Link */}
-                <div className="pt-2">
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 font-semibold text-sm group-hover:gap-3 transition-all duration-300"
-                  >
-                    Read More
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        {/* Empty State */}
+        {!loading && !error && posts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-slate-600 text-lg">No posts available at the moment.</p>
+          </div>
+        )}
 
         {/* Bottom CTA Section */}
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-8 md:p-12 text-white">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated with Our Latest News</h3>
-            <p className="text-sky-100 mb-8 max-w-2xl mx-auto">
-              Subscribe to our newsletter and never miss out on industry insights, project updates, and construction tips.
-            </p>
-            <div className="mt-4">
-              <button className="border-2 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
-                View All Articles
-              </button>
+        {!loading && !error && posts.length > 0 && (
+          <div className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-8 md:p-12 text-white">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated with Our Latest News</h3>
+              <p className="text-sky-100 mb-8 max-w-2xl mx-auto">
+                Subscribe to our newsletter and never miss out on industry insights, project updates, and construction tips.
+              </p>
+              <div className="mt-4">
+                <button className="border-2 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                  View All Articles
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )

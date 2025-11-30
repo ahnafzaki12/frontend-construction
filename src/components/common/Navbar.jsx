@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react"
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -26,36 +27,68 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-sky-200/20"
-          : "bg-white/90 backdrop-blur-sm shadow-sm border-b border-slate-200/30"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out ${
+        isScrolled && !isHovered
+          ? "bg-white/95 backdrop-blur-md shadow-lg"
+          : isScrolled && isHovered
+          ? "bg-white/95 shadow-2xl"
+          : !isScrolled && isHovered
+          ? "bg-white"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 group cursor-pointer">
-            <h1 className="text-2xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
+          <div className="flex-shrink-0 group cursor-pointer transform transition-transform duration-300 hover:scale-105">
+            <h1 className={`text-3xl font-bold transition-colors duration-300 ${
+              isScrolled && !isHovered 
+              ? "text-slate-800" 
+              : !isScrolled && isHovered 
+              ? "text-slate-800" 
+              : isScrolled && isHovered
+              ? "text-slate-800"
+              : "text-white"
+            }`}>
               Amazing
-              <span className="bg-gradient-to-r from-sky-500 to-blue-500 bg-clip-text text-transparent">
+              <span className={`${
+                isScrolled && !isHovered
+                  ? "bg-gradient-to-r from-sky-500 to-blue-500 bg-clip-text text-transparent"
+                  : "text-sky-500"
+              }`}>
                 Constructions
               </span>
             </h1>
-            <p className="text-xs text-slate-500 -mt-1 tracking-wider font-medium">BUILDING EXCELLENCE</p>
+            <p className={`text-sm -mt-1 tracking-widest font-semibold transition-colors duration-300 ${
+              isScrolled && !isHovered ? "text-slate-600" : !isScrolled && isHovered ? "text-slate-600" : isScrolled && isHovered
+              ? "text-slate-800"
+              : "text-white"
+            }`}>
+              BUILDING EXCELLENCE
+            </p>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-1">
-              {navItems.map((item) => (
+            <div className="ml-10 flex items-center space-x-2">
+              {navItems.map((item, index) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="relative text-slate-700 hover:text-slate-900 px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-lg hover:bg-sky-50/50 group"
-                >
-                  {item.name}
-                  <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-300 group-hover:w-3/4 rounded-full"></span>
+                  className={`relative px-5 py-2.5 text-base font-medium transition-all duration-300 rounded-lg group overflow-hidden ${
+                    isScrolled && !isHovered 
+                      ? "text-slate-700 hover:text-slate-900" 
+                      : !isScrolled && isHovered
+                      ? "text-slate-700 font-medium hover:text-sky-600"
+                      : !isScrolled && !isHovered
+                      ? "text-white hover:text-sky-300"
+                      : "text-slate-700 hover:text-sky-600"
+                  } `}
+                > 
+                  {/* Text */}
+                  <span className="relative z-10">{item.name}</span>
                 </a>
               ))}
             </div>
@@ -65,33 +98,73 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-slate-700 hover:text-sky-600 focus:outline-none focus:text-sky-600 transition-colors duration-200 p-2 rounded-lg hover:bg-sky-50/50"
+              className={`focus:outline-none transition-all duration-300 p-2.5 rounded-lg transform hover:scale-110 ${
+                isScrolled && !isHovered
+                  ? "text-slate-700 hover:text-sky-600 hover:bg-sky-100"
+                  : "text-white hover:bg-white/20"
+              }`}
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Navigation Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-sky-200/20 shadow-lg">
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
+          isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className={`backdrop-blur-md border-t shadow-lg ${
+          isHovered ? "bg-sky-800/95 border-sky-600/30" : "bg-white/95 border-sky-200/20"
+        }`}>
           <div className="px-4 pt-2 pb-4 space-y-1">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="text-slate-700 hover:text-slate-900 hover:bg-sky-50/50 block px-4 py-3 text-base font-semibold transition-all duration-200 rounded-lg border-l-4 border-transparent hover:border-sky-400"
+                className={`block px-5 py-4 text-lg font-bold transition-all duration-300 rounded-lg border-l-4 transform hover:translate-x-2 ${
+                  isHovered
+                    ? "text-white hover:text-sky-900 hover:bg-white/20 border-transparent hover:border-white"
+                    : "text-slate-700 hover:text-slate-900 hover:bg-sky-50/50 border-transparent hover:border-sky-400"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
+                style={{
+                  animation: isMenuOpen ? `slideIn 0.3s ease-out ${index * 0.05}s both` : 'none'
+                }}
               >
                 {item.name}
               </a>
             ))}
-
-          
           </div>
         </div>
-      )}
+      </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </nav>
   )
 }

@@ -140,24 +140,6 @@ const OurService = () => {
                             </div>
                         ))}
                     </div>
-
-                    {/* Bottom CTA Section */}
-                    <div className="mt-16 text-center">
-                        <div className="bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-8 md:p-12 text-white">
-                            <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to Start Your Construction Project?</h3>
-                            <p className="text-sky-100 mb-8 max-w-2xl mx-auto">
-                                Get in touch with our expert team today for a free consultation and detailed project estimate.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <button className="bg-white text-sky-600 hover:bg-sky-50 px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg">
-                                    Get Free Quote
-                                </button>
-                                <button className="border-2 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
-                                    View All Projects
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
             <Footer />

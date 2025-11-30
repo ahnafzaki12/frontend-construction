@@ -15,6 +15,12 @@ import {default as EditServices} from './components/backend/services/Edit'
 
 import {default as ShowProjects} from './components/backend/projects/Show'
 import {default as CreateProjects} from './components/backend/projects/Create'
+import {default as EditProjects} from './components/backend/projects/Edit'
+
+import {default as ShowPosts} from './components/backend/posts/Show'
+import {default as CreatePosts} from './components/backend/posts/Create'
+import {default as EditPosts} from './components/backend/posts/Edit'
+
 
 function App() {
 
@@ -68,6 +74,30 @@ function App() {
             </RequiredAuth>
           } />
 
+          <Route path='/admin/projects/edit/:id' element={
+            <RequiredAuth>
+              <EditProjects />
+            </RequiredAuth>
+          } />
+
+          {/* posts */}
+          <Route path='/admin/posts' element={
+            <RequiredAuth>
+              <ShowPosts />
+            </RequiredAuth>
+          } />
+
+          <Route path='/admin/posts/create' element={
+            <RequiredAuth>
+              <CreatePosts />
+            </RequiredAuth>
+          } />
+
+          <Route path='/admin/posts/edit/:id' element={
+            <RequiredAuth>
+              <EditPosts />
+            </RequiredAuth>
+          } />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

@@ -8,7 +8,8 @@ import {
   Menu,
   X,
   ChevronRight,
-  Building2
+  Building2,
+  User,
 } from "lucide-react"
 import { AuthContext } from "../backend/context/Auth"
 import { Link, useLocation } from 'react-router-dom'
@@ -41,7 +42,13 @@ const Sidebar = () => {
       id: 'articles',
       label: 'Articles',
       icon: FileText,
-      href: '/admin/articles'
+      href: '/admin/posts'
+    },
+    {
+      id: 'people',
+      label: 'Peoples',
+      icon: User,
+      href: '/admin/peoples'
     }
   ]
 

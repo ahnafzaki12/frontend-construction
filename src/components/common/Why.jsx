@@ -37,15 +37,10 @@ const Why = () => {
     ]
 
     return (
-        <section className="py-20 bg-white" id="why">
+        <section className="py-20 bg-gray-50" id="why">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="text-center max-w-4xl mx-auto mb-16">
-                    <div className="inline-flex items-center gap-2 bg-sky-500/10 backdrop-blur-sm border border-sky-400/20 text-sky-700 px-4 py-2 rounded-full mb-6">
-                        <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm font-semibold tracking-wider uppercase">Why Choose Us</span>
-                    </div>
-
                     <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
                         Discover our wide variety of{" "}
                         <span className="bg-gradient-to-r from-sky-500 via-blue-500 to-sky-600 bg-clip-text text-transparent">

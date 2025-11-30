@@ -1,6 +1,73 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../../common/Navbar';
+import Sidebar from '../../common/Sidebar';
+import Footer from '../../common/Footer';
+import { apiUrl, token } from '../../common/http';
+import { toast } from 'react-toastify';
+import { SkipBackIcon, Upload, AlertCircle, Save, Eye } from 'lucide-react';
+
 
 const Create = () => {
+    const [isDisable, setIsDisable] = useState(false);
+    const [imageId, setImageId] = useState(null);
+    const [imageName, setImageName] = useState('');
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors }
+    } = useForm();
+
+    const navigate = useNavigate();
+
+    async function onSubmit(data) {
+        const newData = { ...data, "imageId": imageId };
+        const res = await fetch(apiUrl + "projects", {
+            'method': "POST",
+            'headers': {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token()}`
+            },
+            body: JSON.stringify(newData)
+        });
+        const result = await res.json();
+
+        if (result.status === true) {
+            toast.success(result.message);
+            navigate("/admin/projects");
+        } else {
+            toast.error(result.message);
+        }
+    }
+
+    async function handleFile(e) {
+        const formData = new FormData();
+        const file = e.target.files[0];
+        formData.append("image", file);
+
+        const res = await fetch(apiUrl + "temp-images", {
+            'method': "POST",
+            'headers': {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token()}`
+            },
+            body: formData
+        }).then(response => {
+            response.json().then(result => {
+                if (result.status === false) {
+                    toast.error(result.errors.image[0]);
+                } else {
+                    setImageId(result.data.id);
+                    setImageName(file.name); // Set nama file gambar setelah diupload
+                }
+            });
+        });
+    }
+
     return (
         <>
             <Navbar />
@@ -11,8 +78,8 @@ const Create = () => {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-3xl font-bold text-slate-900">Create Services Management</h1>
-                                <p className="text-slate-600 mt-1">Manage your construction services and offerings</p>
+                                <h1 className="text-3xl font-bold text-slate-900">Create Projects Management</h1>
+                                <p className="text-slate-600 mt-1">Manage your construction projects and offerings</p>
                             </div>
                             <a
                                 href="/admin/services"
@@ -36,7 +103,7 @@ const Create = () => {
                                     {/* Service Name */}
                                     <div>
                                         <label htmlFor="title" className="block text-sm font-semibold text-slate-700 mb-2">
-                                            Service Name *
+                                            Project Name *
                                         </label>
                                         <input
                                             {...register('title', { required: "The title field is required" })}
@@ -53,54 +120,57 @@ const Create = () => {
 
                                     {/* Slug */}
                                     <div>
-                                        <label htmlFor="slug" className="block text-sm font-semibold text-slate-700 mb-2">
-                                            URL Slug *
+                                        <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-2">
+                                            Description *
                                         </label>
                                         <input
-                                            {...register('slug', { required: "The slug field is required" })}
+                                            {...register('description', { required: "The description field is required" })}
                                             type="text"
                                             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-300 placeholder-slate-400"
                                         />
-                                        {errors.slug && (
+                                        {errors.description && (
                                             <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                                                 <AlertCircle className="w-4 h-4" />
-                                                {errors.slug?.message}
+                                                {errors.description?.message}
                                             </p>
                                         )}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Content */}
                             <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                    <div className="w-2 h-8 bg-gradient-to-b from-sky-500 to-blue-600 rounded-full"></div>
-                                    Content & Description
-                                </h3>
-
                                 {/* Short Description */}
                                 <div className="mb-6">
-                                    <label htmlFor="short_desc" className="block text-sm font-semibold text-slate-700 mb-2">
-                                        Short Description
+                                    <label htmlFor="location" className="block text-sm font-semibold text-slate-700 mb-2">
+                                        Location
                                     </label>
-                                    <textarea
-                                        {...register('short_desc')}
+                                    <input
+                                        {...register('location')}
                                         className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-300 placeholder-slate-400 resize-none"
-                                        rows={4}
-                                    ></textarea>
+                                    />
                                 </div>
-
-                                {/* Jodit Editor */}
-                                <div>
-                                    <label htmlFor="content" className="block text-sm font-semibold text-slate-700 mb-2">
-                                        Detailed Content
+                            </div>
+                            <div>
+                                {/* Short Description */}
+                                <div className="mb-6">
+                                    <label htmlFor="year" className="block text-sm font-semibold text-slate-700 mb-2">
+                                        Year
                                     </label>
-                                    <JoditEditor
-                                        ref={editor}
-                                        value={content}
-                                        config={config}
-                                        onBlur={newContent => setContent(newContent)}
-                                        className="border border-slate-300 rounded-lg p-4 focus:ring-2 focus:ring-sky-500"
+                                    <input
+                                        {...register('year')}
+                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-300 placeholder-slate-400 resize-none"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                {/* Short Description */}
+                                <div className="mb-6">
+                                    <label htmlFor="category" className="block text-sm font-semibold text-slate-700 mb-2">
+                                        Category
+                                    </label>
+                                    <input
+                                        {...register('category')}
+                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-300 placeholder-slate-400 resize-none"
                                     />
                                 </div>
                             </div>
@@ -113,7 +183,7 @@ const Create = () => {
                                 </h3>
 
                                 <label htmlFor="image" className="block text-sm font-semibold text-slate-700 mb-2">
-                                    Service Image
+                                    Project Image
                                 </label>
                                 <div className="relative">
                                     <input
